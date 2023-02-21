@@ -1,10 +1,7 @@
 package com.example.android.minipaint
 
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.Paint
-import android.graphics.Path
+import android.graphics.*
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewConfiguration
@@ -27,6 +24,8 @@ class MyCanvasView(context: Context) : View(context) {
 	private var currentY = 0f
 
 	private val touchTolerance = ViewConfiguration.get(context).scaledTouchSlop
+
+	private lateinit var frame: Rect
 
 	private val backgroundColor = ResourcesCompat.getColor(
 		resources, R.color.colorBackground, null
@@ -54,11 +53,18 @@ class MyCanvasView(context: Context) : View(context) {
 		extraBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
 		extraCanvas = Canvas(extraBitmap)
 		extraCanvas.drawColor(backgroundColor)
+
+		// Calculate a rectangular frame around the picture.
+		val inset = 40
+		frame = Rect(inset, inset, width - inset, height - inset)
 	}
 
 	override fun onDraw(canvas: Canvas) {
 		super.onDraw(canvas)
 		canvas.drawBitmap(extraBitmap, 0f, 0f, null)
+
+		// Draw a frame around the canvas.
+		canvas.drawRect(frame, paint)
 	}
 
 	private fun touchStart() {
